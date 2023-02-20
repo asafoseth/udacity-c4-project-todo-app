@@ -33,3 +33,9 @@ export async function createTodo(
 
     return await todosAccess.createTodoItem(newItem)
 }
+
+// Implement Get TODO function
+export async function getUserTodos(userId: string): Promise<TodoItem[]> {
+    logger.info('Initiated function to get User Todos')
+    return todosAccess.getAllTodos(userId)
+}
