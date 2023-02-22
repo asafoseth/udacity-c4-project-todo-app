@@ -49,12 +49,12 @@ export class TodosAccess {
 
     async updateTodoItem(
         todoId: string,
-        userId: string,
-        todoUpdate: TodoUpdate
+        todoUpdate: TodoUpdate,
+        userId: string
     ): Promise<TodoUpdate> {
-        logger.info('Initiaded ToDo Update function')
+        logger.info('Initiated Todo Update function')
 
-        await this.docClient
+        const result = await this.docClient
         .update({
             TableName: this.todosTable,
             Key: {
@@ -69,17 +69,21 @@ export class TodosAccess {
             },
             ExpressionAttributeNames: {
                 '#name': 'name'
-            }
+            },
+            ReturnValues: 'ALL_NEW'
         })
         .promise()
 
-        return todoUpdate
+        const todoUpdateItem = result.Attributes
+        logger.info('Todo item updated', todoUpdateItem)
+        return todoUpdateItem as TodoUpdate
+    
     }
 
-    async deleteTodoItem(todoId: string, userId: string): Promise<void> {
-        logger.info('Delete todo item function called')
+    async deleteTodoItem(todoId: string, userId: string): Promise<string> {
+        logger.info('Initiate Delete todo item function')
 
-        await this.docClient
+        const result = await this.docClient
         .delete({
             TableName: this.todosTable,
             Key: {
@@ -88,6 +92,8 @@ export class TodosAccess {
             }
         })
         .promise()
+        logger.info('Todo item deleted', result)
+        return todoId as string
     }
 
     async updateTodoAttachmentUrl(
@@ -112,3 +118,4 @@ export class TodosAccess {
         .promise()
     }
 }
+
